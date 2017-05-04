@@ -18,7 +18,6 @@ def insert_entry_in_db(topic, message, timestamp=None):
     topic_id = cursor.fetchone()[0]
     db.execute("INSERT INTO log_entries (timestamp, value, topic_id) VALUES (?,?,?)", [timestamp, message, topic_id])
     db.commit()
-    print("inserted")
     return
 
 def on_connect(client, userdata, rc):
@@ -28,15 +27,8 @@ def on_connect(client, userdata, rc):
 def on_message(client, userdata, msg):
     payload = bytes(msg.payload).decode('utf-8')
     topic = msg.topic
-    print(topic+" "+ payload)
     insert_entry_in_db(topic, payload)
-    if(payload.isnumeric()):
-        print("is int")
-    else:
-        if(isfloat(payload)):
-            print("is float")
-        else:
-            print("is not a number")
+
 
 db = sqlite3.connect("logger.db")
 client = mqtt.Client()
